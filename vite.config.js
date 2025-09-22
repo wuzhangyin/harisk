@@ -4,7 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/harisk/',
+  base: process.env.NODE_ENV === 'production' ? '/harisk/' : '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
