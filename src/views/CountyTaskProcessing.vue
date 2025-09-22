@@ -324,7 +324,14 @@
             <el-table-column prop="processor" label="工单处理人" width="150" />
             <el-table-column prop="contactMethod" label="环节处理人联系方式" width="180" />
             <el-table-column prop="processTime" label="环节处理时间" width="180" />
-            <el-table-column prop="approvalTrack" label="审批轨迹" width="120" />
+            <el-table-column prop="approvalTrack" label="审批轨迹" width="120">
+              <template #default="scope">
+                <span v-if="scope.row.approvalTrack === '审批不通过'" class="rejected-track">
+                  {{ scope.row.approvalTrack }}
+                </span>
+                <span v-else>{{ scope.row.approvalTrack }}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="remarks" label="备注" />
           </el-table>
         </div>
@@ -334,13 +341,14 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { QuestionFilled, UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import * as XLSX from 'xlsx'
 
 const router = useRouter()
+const route = useRoute()
 
 // 分页数据
 const currentPage = ref(1)
@@ -582,6 +590,46 @@ const handleBatchUpload = (file) => {
   
   reader.readAsArrayBuffer(file)
   return false // 阻止自动上传
+}
+
+// 组件挂载时检查路由参数
+onMounted(() => {
+  // 检查是否有消息提示
+  if (route.query.message) {
+    ElMessage.warning(route.query.message)
+    
+    // 如果是审批不通过的消息，添加审批不通过的历史记录
+    if (route.query.message.includes('审批不通过')) {
+      addApprovalRejectedHistory()
+    }
+  }
+})
+
+// 添加审批不通过的历史记录
+const addApprovalRejectedHistory = () => {
+  const currentTime = new Date().toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).replace(/\//g, '-')
+  
+  // 创建审批不通过的历史记录
+  const rejectedHistory = {
+    stage: '举措审批',
+    startTime: currentTime,
+    status: '已处理',
+    processor: '市级审批人员',
+    contactMethod: '审批系统',
+    processTime: currentTime,
+    approvalTrack: '审批不通过',
+    remarks: '审批不通过，返回区县工单处理环节'
+  }
+  
+  // 将审批不通过的记录插入到历史数据的开头（最新的记录）
+  taskHistoryData.value.unshift(rejectedHistory)
 }
 
 </script>
@@ -937,6 +985,16 @@ const handleBatchUpload = (file) => {
   grid-template-columns: repeat(8, 1fr);
   gap: 16px;
   font-size: 14px;
+}
+
+/* 审批不通过样式 */
+.rejected-track {
+  color: #f56c6c;
+  font-weight: bold;
+  background-color: #fef0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #fbc4c4;
 }
 
 /* 响应式设计 */

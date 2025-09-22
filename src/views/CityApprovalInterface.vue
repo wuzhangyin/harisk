@@ -446,9 +446,15 @@ const handleSubmit = async () => {
     return
   }
   
+  // 根据审批结果设置不同的确认消息
+  const isApproved = approvalResult.value === 'approved'
+  const confirmMessage = isApproved 
+    ? '确定要提交审批结果吗？审批通过后流程将进入问题归档环节。'
+    : '确定要提交审批结果吗？审批不通过后流程将返回区县工单处理环节。'
+  
   try {
     await ElMessageBox.confirm(
-      '确定要提交审批结果吗？提交后流程将进入问题归档环节。',
+      confirmMessage,
       '确认提交',
       {
         confirmButtonText: '确定',
@@ -464,18 +470,32 @@ const handleSubmit = async () => {
       files: approvalFileList.value
     })
     
-    ElMessage.success('审批提交成功！流程已进入问题归档环节')
-    
-    // 延迟跳转到我的待办已办列表
-    setTimeout(() => {
-      router.push({
-        path: '/my-tasks',
-        query: {
-          tab: 'completed', // 跳转到已办列表
-          message: '审批完成，任务已归档'
-        }
-      })
-    }, 1500)
+    if (isApproved) {
+      // 审批通过 - 跳转到已办列表
+      ElMessage.success('审批通过！流程已进入问题归档环节')
+      
+      setTimeout(() => {
+        router.push({
+          path: '/my-tasks',
+          query: {
+            tab: 'completed', // 跳转到已办列表
+            message: '审批通过，任务已归档'
+          }
+        })
+      }, 1500)
+    } else {
+      // 审批不通过 - 跳转到区县工单处理
+      ElMessage.warning('审批不通过！流程已返回区县工单处理环节')
+      
+      setTimeout(() => {
+        router.push({
+          path: '/county-task',
+          query: {
+            message: '审批不通过，请重新处理'
+          }
+        })
+      }, 1500)
+    }
     
   } catch (error) {
     // 用户取消操作
