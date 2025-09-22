@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .status {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 GitHub Pages 部署测试</h1>
+        
+        <div class="status">
+            <strong>✅ 部署状态：</strong> GitHub Pages 正常工作
+        </div>
+        
+        <div class="info">
+            <strong>📋 项目信息：</strong><br>
+            项目名称：风险管理系统<br>
+            部署时间：<span id="deployTime"></span><br>
+            访问地址：<a href="/harisk/">风险管理系统主页面</a>
+        </div>
+        
+        <h2>🔧 故障排除</h2>
+        <p>如果您看到这个页面，说明GitHub Pages部署正常。如果主页面显示空白，可能的原因：</p>
+        <ul>
+            <li>GitHub Pages需要2-5分钟更新</li>
+            <li>浏览器缓存问题，请强制刷新（Ctrl+F5）</li>
+            <li>JavaScript被浏览器阻止</li>
+            <li>网络连接问题</li>
+        </ul>
+        
+        <h2>📱 测试链接</h2>
+        <p>
+            <a href="/harisk/" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">访问风险管理系统</a>
+        </p>
+    </div>
+    
+    <script>
+        document.getElementById('deployTime').textContent = new Date().toLocaleString('zh-CN');
+    </script>
+</body>
+</html>
